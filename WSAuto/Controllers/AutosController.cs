@@ -43,5 +43,55 @@ namespace WSAuto.Controllers
             context.SaveChanges();
             return Ok();
         }
+
+        [HttpGet("{id}")]
+        public ActionResult<Auto> Get(int id)
+        {
+            return context.Autos.Find(id);
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult Put(int id, Auto auto)
+        {
+            if (id != auto.Id)
+            {
+                return BadRequest();
+            }
+            context.Entry(auto).State = EntityState.Modified;
+            context.SaveChanges();
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult<Auto> Delete(int id)
+        {
+            Auto auto = context.Autos.Find(id);
+            if (auto == null)
+            {
+                return NotFound();
+            }
+            context.Autos.Remove(auto);
+            context.SaveChanges();
+            return auto;
+        }
+
+        [HttpGet("GetByModelAndBrand/{model}/{brand}")]
+        public IEnumerable<Auto> GetByModelAndBrand(string model, string brand)
+        {
+            var profesores = (from a in context.Autos
+                              where a.Modelo == model
+                              && a.Marca == brand
+                              select a).ToList();
+            return profesores;
+        }
+
+        [HttpGet("GetByColor/{color}")]
+        public IEnumerable<Auto> GetByColor(string color)
+        {
+            var profesores = (from a in context.Autos
+                              where a.Color == color
+                              select a).ToList();
+            return profesores;
+        }
     }
 }
